@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %} Play {% endblock %}
+{% block content  %}
+
+    <!-- Site index html -->
+ <!-- Site index html -->
+ <div class="music_container row container-fluid">
+    <h1 class="title">Music</h1>
+
+    <div class="serch_song">
+        <form action="" class="search_box">
+            <label for=""><strong>Search</strong></label>
+            {{ form }}
+            {# <input type="search" name="name" id="">#}
+            <button class="btn btn-primary">Search</button>
+        </form>
+    </div>
+    {% for song in music %}
+    <div class="col-lg-3 col-md-4 col-sm-12">
+        <div class="">
+            <div class="music_box">
+                <div class="music_image">
+                    <a href="{% url 'music:detail' song.id %}">
+                        <img src="{% if song.image %}{{ song.image.url }}{% endif %}" alt="{{song.first_name}}">
+                    </a>
+                </div>
+                <div class="music_name">
+                    <h3 class="">{{ song.name }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <nav aria-label="...">
+        <ul class="pagination d-flex justify-content-end">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+            <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+</div>
+{% endblock %}

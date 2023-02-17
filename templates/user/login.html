@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content  %}
+
+<!-- Login form html -->
+
+<div class="main ">
+    <div class="add_post_box">
+        <h1 class="add_post_title title">Login</h1>
+        <form action="" method="POST" enctype="multipart/form-data" class="search_box log_reg_form">
+            {% csrf_token %}
+            <p>
+                <label for="">Username</label>
+                <input type="text" name="username" id="userName">
+            </p>
+            <p>
+                <label for="">Password</label>
+                <input type="password" name="password" id="pwd">
+            </p>
+            <button class="btn mt-3">Login</button>
+            <div class="log_box">
+                <p>
+                    <a href="#">Forget password?</a> or <a href="{% url 'user:register' %}">Sign up</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

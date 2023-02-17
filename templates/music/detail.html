@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %} music Detail {% endblock %}
+{% load static %}
+{% block content  %}
+
+<!-- music Detail -->
+
+<div class="detail_main">
+    <div class="container-large">
+        <div class="container">
+            <h1 class="main_title">{{ music.name }} {{ music.ganre }}</h1>
+            <div class="music row music_detail">
+                <div class="music_detail_container">
+                    <div class="music_main_box">
+                        <div class="year_box">
+                            <span>Year | {{ music.year }}</span>
+                        </div>
+                        <div class="music_content row">
+                            <div class="col1 col">
+                                <div class="detail_img"><img width="500" src="{% if music.image %}{{ music.image.url }}{% endif %}" alt="{{ music.first_name }} {{ music.last_name }}"></div>
+                            </div>
+                            <div class="col2 col">
+                                <p>{{ music.lyrics }}</p>
+                            </div>
+                            <audio controls>
+                                <source src="{% if music.audio %}{{ music.audio.url }}{% endif %}" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="signers">
+                    <div class="">
+                        <h4>Signers</h4>
+                        <div class="detail_music_box row">
+                        {% if music.signer.all  %}
+                            {% for signer in music.signer.all %}
+                            <a href="{{ signer.get_absolute_url }}" data-tooltip="Person {{ forloop.counter }}" data-placement="top" class="detail_mov_act_img col-lg-3 col-md-4 col-sm-12">
+                                <img src="{% if signer.image %}{{ signer.image.url }}{% endif %}" alt="avatar1"/>
+                            </a>
+                            {% endfor %}
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

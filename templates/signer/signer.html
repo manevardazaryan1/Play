@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Play {% endblock %}
+{% block content  %}
+
+
+    <!-- Site index html -->
+    <div class="row signer_container container-fluid">
+        <h1 class="title">Signers</h1>
+
+        <div class="serch_signer">
+            <form action="" class="search_box">
+                <label for=""><strong>Search</strong></label>
+                {{ form }}
+                {# <input type="search" name="name" id="">#}
+                <button class="btn btn-primary">Search</button>
+            </form>
+        </div>       
+        {% for signer in signers %}
+        <div class="col-lg-3 col-md-4 col-sm-12">
+            <div class="signer_box">
+                <div class="signer_image">
+                    <a href="{% url 'signer:detail' signer.id %}">
+                        <img src="{% if signer.image %}{{ signer.image.url }}{% endif %}" alt="{{signer.first_name}}" width="200">
+                    </a>
+                </div>
+                <div class="signer_name"><h3>{{ signer.first_name }}</h3></div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <nav aria-label="...">
+            <ul class="pagination d-flex justify-content-end">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+                {% endif %}
+                <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <dic class="circle"></dic>
+    </div>
+{% endblock %}
+
+
