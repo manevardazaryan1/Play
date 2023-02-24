@@ -1,8 +1,14 @@
-from django.urls import reverse, reverse_lazy
-from .forms import RegisterForm
+import json
+
 from django.contrib.auth.models import User
-from django.views.generic import (CreateView)
 from django.contrib.auth.views import LoginView, LogoutView
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView
+
+from music.models import Music
+
+from .forms import RegisterForm
 
 # User app view.py
 
@@ -30,3 +36,25 @@ class Logout(LogoutView):
     """Log out class"""
     
     next_page = "base:index"
+
+def profile(request,user_name):
+    """Profile function"""
+
+    if user_name != request.user.username:
+        return redirect('base:index')
+    user = User.objects.get(username=request.user.username)
+    return render(request, 'user/profile.html', {'user': user})
+
+def add_my_playlist(request,pk):
+    music = Music.objects.get(pk=pk)
+    music_pk = bool(request.user.profile.my_playlist.filter(pk=pk))
+
+    if not music_pk:
+        request.user.profile.my_playlist.add(music)
+
+    return render(request, 'user/my_playlist.html')
+
+def my_playlist(request,user_name):
+    if user_name != request.user.username:
+        return redirect('base:index')
+    return render(request, 'user/my_playlist.html')

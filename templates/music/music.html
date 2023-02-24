@@ -2,11 +2,10 @@
 {% block title %} Play {% endblock %}
 {% block content  %}
 
-    <!-- Site index html -->
+<!-- Site index html -->
  <!-- Site index html -->
  <div class="music_container row container-fluid">
     <h1 class="title">Music</h1>
-
     <div class="serch_song">
         <form action="" class="search_box">
             <label for=""><strong>Search</strong></label>
@@ -31,7 +30,6 @@
         </div>
     </div>
     {% endfor %}
-
     <nav aria-label="...">
         <ul class="pagination d-flex justify-content-end">
             {% if page_obj.has_previous %}
@@ -47,6 +45,5 @@
             {% endif %}
         </ul>
     </nav>
-
 </div>
 {% endblock %}

@@ -9,6 +9,5 @@ app_name = 'music'
 urlpatterns = [
     path('music/', views.IndexView.as_view(), name='music'),
     path('music/detail/<int:pk>/', views.MusicDetailView.as_view(), name='detail'),
+    path('save-comment/', views.save_comment, name='save-comment'),
 ]
-
-

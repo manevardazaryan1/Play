@@ -5,10 +5,10 @@
 
 
     <!-- Site index html -->
-    <div class="row signer_container container-fluid">
-        <h1 class="title">Signers</h1>
+    <div class="row singer_container container-fluid">
+        <h1 class="title">Singers</h1>
 
-        <div class="serch_signer">
+        <div class="serch_singer">
             <form action="" class="search_box">
                 <label for=""><strong>Search</strong></label>
                 {{ form }}
@@ -16,15 +16,15 @@
                 <button class="btn btn-primary">Search</button>
             </form>
         </div>       
-        {% for signer in signers %}
+        {% for singer in singers %}
         <div class="col-lg-3 col-md-4 col-sm-12">
-            <div class="signer_box">
-                <div class="signer_image">
-                    <a href="{% url 'signer:detail' signer.id %}">
-                        <img src="{% if signer.image %}{{ signer.image.url }}{% endif %}" alt="{{signer.first_name}}" width="200">
+            <div class="singer_box">
+                <div class="singer_image">
+                    <a href="{% url 'singer:detail' singer.id %}">
+                        <img src="{% if singer.image %}{{ singer.image.url }}{% endif %}" alt="{{singer.first_name}}">
                     </a>
                 </div>
-                <div class="signer_name"><h3>{{ signer.first_name }}</h3></div>
+                <div class="singer_name"><h3>{{ singer.name }}</h3></div>
             </div>
         </div>
         {% endfor %}

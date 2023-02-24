@@ -1,203 +1,70 @@
 {% extends 'base.html' %}
-{% block title %} Play {% endblock %}
+{% block title %} Player {% endblock %}
 {% load static %}
 {% block content  %}
 
-
-  <div class="player">
- 
-    <!-- Define the section for displaying details -->
-    <div class="details">
-      <div class="now-playing">PLAYING x OF y</div>
-      <div class="track-art">
-        <img src="media/images/24K Magic/653677.jpg" alt="" class="track-image">
-      </div>
-      <div class="track-name">Track Name</div>
+<div class="base_main">
+  <div id="carouselExampleCaptions" class="carousel slide">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 4"></button>
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="4" aria-label="Slide 5"></button>
     </div>
- 
-    <!-- Define the section for displaying track buttons -->
-    <div class="buttons">
-      <div class="prev-track" onclick="prevTrack()">
-        <i class="fa fa-step-backward fa-2x"></i>
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner slider">
+        <div class="carousel-item active">
+          <img src="{% static 'images/slider/slaider_img1.jpg' %}" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>Player</h5>
+            <a href="{% url 'base:player' %}">Player songs</a>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'images/slider/slaider_img2.jpg' %}" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>Music</h5>
+            <a href="{% url 'music:music' %}">500 Best Songs</a>
+          </div>			      
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'images/slider/slaider_img3.jpg' %}" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>Singers</h5>
+            <a href="{% url 'singer:singer' %}">The Best</a>
+            <p></p>
+          </div>			      
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'images/slider/slaider_img4.jpg' %}" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>Create Playlist</h5>
+            {% if request.user.is_authenticated %}
+              <a href="{% url 'user:my_playlist' request.user.username %}">My Playlist</a>
+            {% else %}
+              <a class="navbar-brand" href="{% url 'user:login' %}">Login</a>
+            {% endif %}
+          </div>			      
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'images/slider/slaider_img5.jpg' %}" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>About</h5>
+            <a href="{% url 'base:about' %}">About Us</a>
+          </div>			      
+        </div>
       </div>
-      <div class="playpause-track" onclick="playpauseTrack()">
-        <i class="fa fa-play-circle fa-5x"></i>
-      </div>
-      <div class="next-track" onclick="nextTrack()">
-        <i class="fa fa-step-forward fa-2x"></i>
-      </div>
-    </div>
- 
-    <!-- Define the section for displaying the seek slider-->
-    <div class="slider_container">
-      <div class="current-time">00:00</div>
-      <input type="range" min="1" max="100"
-        value="0" class="seek_slider" onchange="seekTo()">
-      <div class="total-duration">00:00</div>
-    </div>
- 
-    <!-- Define the section for displaying the volume slider-->
-    <div class="slider_container">
-      <i class="fa fa-volume-down"></i>
-      <input type="range" min="1" max="100"
-        value="99" class="volume_slider" onchange="setVolume()">
-      <i class="fa fa-volume-up"></i>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
     </div>
   </div>
-
-
-  <!-- Load the main script for the player -->
-  <script>
-    let now_playing = document.querySelector(".now-playing");
-    let track_art = document.querySelector(".track-art");
-    let track_img = document.querySelector(".track-image");
-    let track_name = document.querySelector(".track-name");
-    let track_artist = document.querySelector(".track-artist");
-
-    let playpause_btn = document.querySelector(".playpause-track"); 
-    let next_btn = document.querySelector(".next-track");
-    let prev_btn = document.querySelector(".prev-track");
-
-    let seek_slider = document.querySelector(".seek_slider");
-    let volume_slider = document.querySelector(".volume_slider");
-    let curr_time = document.querySelector(".current-time");
-    let total_duration = document.querySelector(".total-duration");
-
-    let track_index = 0;
-    let isPlaying = false;
-    let updateTimer;
-
-// Create new audio element
-    let curr_track = document.createElement('audio');
-
-// Define the tracks that have to be played
-    let track_list = [
-      {name: "Golden", path: "media/audio/Golden/golden.mp3", image: "media/images/Golden/https___images.genius.com_45d822dc3d5485ae646546e50367cfc5.300x300x1.png", artist: 62},
-      {name: "Blinding Lights", path: "media/audio/Blinding Lights/Blinding_Lights.mp3", image: "media/images/Blinding Lights/the_weeknd_blinding_lights_vid_2020_billboard_1548.jpg", artist: 61}, 
-      {name: "In Da Club", path: "media/audio/In Da Club/In_Da_Club.mp3", image: "media/images/In Da Club/cad3c39d33f4414fc12192c62e06c16c.jpg", artist: 60}, 
-      {name: "I Say A Little Prayer", path: "media/audio/I Say A Little Prayer/I_Say_A_Little_Prayer.mp3", image: "media/images/I Say A Little Prayer/sotd-aretha-franklin-I-say-a-little-prayer-compressor.jpg", artist: 59}, 
-      {name: "Loca", path: "media/audio/Loca/Loca.mp3", image: "media/images/Loca/04980a2eec2bb00f64d7abc23b86692e_large-342126.jpg", artist: 57}, 
-      {name: "I'd Rather Go Blind", path: "media/audio/I'd Rather Go Blind/Id_Rather_Go_Blind.mp3", image: "media/images/I'd Rather Go Blind/ETTA-JAMES-_-I_d-Rather-Go-Blind.jpg", artist: 55}, 
-      {name: "Love Don't Cost a Thing", path: "media/audio/Love Don't Cost a Thing/Love_Dont_Cost_a_Thing.mp3", image: "media/images/Love Don't Cost a Thing/1280x720.jpg", artist: 54}, 
-      {name: "The Show Must Go On", path: "media/audio/The Show Must Go On/The_Show_Must_Go_On.mp3", image: "media/images/The Show Must Go On/maxresdefault_1.jpg", artist: 53}, 
-      {name: "Toxic", path: "media/audio/Toxic/Toxic.mp3", image: "media/images/Toxic/maxresdefault.jpg", artist: 52}, {name: "7 rings", path: "media/audio/7 rings/7_rings.mp3", image: "media/images/7 rings/Ariana_Grande_-_7_Rings.jpeg", artist: 51}, 
-      {name: "Don't Start Now", path: "media/audio/Don't Start Now/Dont_Start_Now.mp3", image: "media/images/Don't Start Now/maxresdefault.jpg", artist: 49}, 
-      {name: "Love in Portofino", path: "media/audio/Love in Portofino/Love_in_Portofino.mp3", image: "media/images/Love in Portofino/002bd2a8.jpeg", artist: 47}, 
-      {name: "Change The World", path: "media/audio/Change The World/Change_The_World.mp3", image: "media/images/Change The World/maxresdefault.jpg", artist: 46}, 
-      {name: "My Fathers Son", path: "media/audio/My Fathers Son/Joe_Cocker_-_My_Fathers_Son_....mp3", image: "media/images/My Fathers Son/maxresdefault_1_1.jpg", artist: 45}, 
-      {name: "And You My Love", path: "media/audio/And You My Love/Chris_Rea__And_You_My_Love_.mp3", image: "media/images/And You My Love/189-chris-rea-aubergejpg.jpg", artist: 44}, 
-      {name: "Cardigan", path: "media/audio/Cardigan/Taylor_Swift_-_cardigan_Official_Music_Video.mp3", image: "media/images/Cardigan/Taylor-Swift-stars-react-to-folklore.jpg", artist: 43}, 
-      {name: "Super Freaky Girl", path: "media/audio/Super Freaky Girl/Super_Freaky_Girl.mp3", image: "media/images/Super Freaky Girl/76ad304d54105ca8149a912c0d752920.jpg", artist: 42}, 
-      {name: "Thinking Out Loud", path: "media/audio/Thinking Out Loud/Ed_Sheeran_-_Thinking_Out_Loud_Official_Music_Video.mp3", image: "media/images/Thinking Out Loud/Single.jpeg", artist: 41}, 
-      {name: "Stuck with U", path: "media/audio/Stuck with U/Ariana_Grande_Justin_Bieber_-_Stuck_with_U_Lyric_Video.mp3", image: "media/images/Stuck with U/maxresdefault.jpg", artist: 40}, 
-      {name: "Stuck with U", path: "media/audio/Stuck with U/Ariana_Grande_Justin_Bieber_-_Stuck_with_U_Lyric_Video.mp3", image: "media/images/Stuck with U/maxresdefault.jpg", artist: 51}, 
-      {name: "Calm Down", path: "media/audio/Calm Down/Rema_Selena_Gomez_-_Calm_Down_Official_Music_Video.mp3", image: "media/images/Calm Down/maxresdefault.jpg", artist: 39}, 
-      {name: "One Dance", path: "media/audio/One Dance/Drake_-_One_Dance_Lyrics_ft._Wizkid__Kyla.mp3", image: "media/images/One Dance/Drake_Views_mp3_download_320kbps_mp3-tub.blogspot.com.jpg", artist: 38}, 
-      {name: "24K Magic", path: "media/audio/24K Magic/Bruno_Mars_-_24K_Magic_Official_Music_Video.mp3", image: "media/images/24K Magic/653677.jpg", artist: 37}, 
-      {name: "Cold Heart", path: "media/audio/Cold Heart/Elton_John_Dua_Lipa_-_Cold_Heart_PNAU_Remix_Official_Video.mp3", image: "media/images/Cold Heart/ed02af2f2bce35751ff19a28935a73dc12_resize_1400x1400xxjpegxffffffxnoups_Drvcv5S.jpg", artist: 36},  
-      {name: "Imagine", path: "media/audio/Imagine/IMAGINE._Ultimate_Mix_2020_-_John_Lennon__The_Plastic_Ono_Band_with_the_Fl_eNAbVj0.mp3", image: "media/images/Imagine/b50da373a2bbfc2203545663a7016c4d.jpg", artist: 35}];
-
-    function random_bg_color(){
-      // Get a number between 64 to 256 (for getting lighter colors)
-      let red = Math.floor(Math.random() * 256) + 64;
-      let green = Math.floor(Math.random() * 256) + 64;
-      let blue = Math.floor(Math.random() * 256) + 64;
-
-      // Construct a color withe the given values
-      let bgColor = "rgb(" + red + "," + green + "," + blue + ")";
-
-      // Set the background to that color
-      document.body.style.background = bgColor;
-    }
-
-    function loadTrack(track_index){
-      clearInterval(updateTimer);
-      resetValues();
-      curr_track.src = track_list[track_index].path;
-      curr_track.load();
-
-      track_img.src = track_list[track_index].image
-      track_name.textContent = track_list[track_index].name;
-      now_playing.textContent = "PLAYING " + (track_index + 1) + " OF " + track_list.length;
-
-      updateTimer = setInterval(seekUpdate, 1000);
-      curr_track.addEventListener("ended", nextTrack);
-      random_bg_color();
-    }
-
-    function resetValues(){
-      curr_time.textContent = "00:00";
-      total_duration.textContent = "00:00";
-      seek_slider.value = 0;
-    }
-
-    // Load the first track in the tracklist
-    loadTrack(track_index);
-
-    function playpauseTrack(){
-      if (!isPlaying) playTrack();
-      else pauseTrack();
-    }
-
-    function playTrack() {
-      curr_track.play();
-      isPlaying = true;
-      playpause_btn.innerHTML = '<i class="fa fa-pause-circle fa-5x"></i>';
-    }
-
-    function pauseTrack(){
-      curr_track.pause();
-      isPlaying = false;
-      playpause_btn.innerHTML = '<i class="fa fa-play-circle fa-5x"></i>';
-    }
-
-    function nextTrack(){
-      if (track_index < track_list.length - 1)
-      track_index += 1;
-      else track_index = 0;
-      loadTrack(track_index);
-      playTrack();
-    }
-
-    function prevTrack(){
-      if (track_index > 0)
-      track_index -= 1;
-      else track_index = track_list.length;
-      loadTrack(track_index);
-      playTrack();
-    }
-
-    function seekTo(){
-      let seekto = curr_track.duration * (seek_slider.value / 100);
-      curr_track.currentTime = seekto;
-    }
-
-    function setVolume(){
-      curr_track.volume = volume_slider.value / 100;
-    }
-
-    function seekUpdate(){
-      let seekPosition = 0;
-
-      if (!isNaN(curr_track.duration)){
-        seekPosition = curr_track.currentTime * (100 / curr_track.duration);
-
-        seek_slider.value = seekPosition;
-
-        let currentMinutes = Math.floor(curr_track.currentTime / 60);
-        let currentSeconds = Math.floor(curr_track.currentTime - currentMinutes * 60);
-        let durationMinutes = Math.floor(curr_track.duration / 60);
-        let durationSeconds = Math.floor(curr_track.duration - durationMinutes * 60);
-
-        if (currentSeconds < 10) { currentSeconds = "0" + currentSeconds; }
-        if (durationSeconds < 10) { durationSeconds = "0" + durationSeconds; }
-        if (currentMinutes < 10) { currentMinutes = "0" + currentMinutes; }
-        if (durationMinutes < 10) { durationMinutes = "0" + durationMinutes; }
-
-        curr_time.textContent = currentMinutes + ":" + currentSeconds;
-        total_duration.textContent = durationMinutes + ":" + durationSeconds;
-      }
-    }
-
-  </script>
+</div>
+  
 {% endblock %}

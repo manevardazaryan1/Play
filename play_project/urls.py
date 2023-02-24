@@ -22,8 +22,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('base.urls')),
     path('', include('music.urls')),
-    path('', include('signer.urls')),
+    path('', include('singer.urls')),
     path('', include('user.urls')),
+    path("music/api/", include("music.api.urls")),
 ]
 
 if settings.DEBUG:

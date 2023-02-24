@@ -11,13 +11,19 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'base:index' %}">Player</a>
+            <a class="nav-link active" aria-current="page" href="{% url 'base:index' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'base:player' %}">Player</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'music:music' %}">Songs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'signer:signer' %}">Signers</a>
+            <a class="nav-link" href="{% url 'singer:singer' %}">Singers</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'base:about' %}">About</a>
           </li>
         </ul>
       </div>
@@ -25,7 +31,9 @@
         <button class="btn dropdown-toggle log_reg_button" type="button" data-bs-toggle="dropdown">User</button>
         <ul class="dropdown-menu log_reg_drop">
           {% if request.user.is_authenticated %}
-            <li><a class="navbar-brand" href="{% url 'user:logout' %}">Logout ({{ request.user.username }})</a></li>
+            <li><a href="{% url 'user:profile' request.user.username %}" class="navbar-brand">Profile</a></li>
+            <li><a href="{% url 'user:my_playlist' request.user.username %}" class="navbar-brand">Playlist</a></li>
+            <li><a class="navbar-brand" href="{% url 'user:logout' %}">Logout ({{ request.user.username | title }})</a></li>
           {% else %}
             <li><a class="navbar-brand" href="{% url 'user:register' %}">Register</a></li>
             <li><a class="navbar-brand" href="{% url 'user:login' %}">Login</a></li>

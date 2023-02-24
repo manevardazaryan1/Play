@@ -1,7 +1,4 @@
 from django import forms
-from django.db.models import Max, Min
-
-from .models import Music
 
 # music app forms.py
 

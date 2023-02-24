@@ -8,35 +8,65 @@
 <div class="detail_main">
     <div class="container-large">
         <div class="container">
-            <h1 class="main_title">{{ music.name }} {{ music.ganre }}</h1>
+            <h1 class="main_title title">{{ music.name }}</h1>
             <div class="music row music_detail">
                 <div class="music_detail_container">
                     <div class="music_main_box">
                         <div class="year_box">
-                            <span>Year | {{ music.year }}</span>
+                            <span>Year | {{ music.year }} | {{ music.genre }}</span>
+                        </div>
+                        <div class="year_box">
+                            <a href="{% url 'user:add_my_playlist' music.id %}" class="add_song_button">Add To My Playlist</a>
                         </div>
                         <div class="music_content row">
                             <div class="col1 col">
-                                <div class="detail_img"><img width="500" src="{% if music.image %}{{ music.image.url }}{% endif %}" alt="{{ music.first_name }} {{ music.last_name }}"></div>
+                                <div class="detail_img"><img width="500" src="{% if music.image %}{{ music.image.url }}{% endif %}" alt="{{ music.name }}"></div>
                             </div>
-                            <div class="col2 col">
-                                <p>{{ music.lyrics }}</p>
+                            <div class="player detail">
+                                <!-- Define the section for displaying details -->
+                                <div class="details">
+                                    <div class="now-playing">PLAYING x OF y</div>
+                                    <div class="track-art">
+                                    <img src="{{ music.image.url }}" alt="" class="track-image">
+                                    </div>
+                                    <div class="track-name"> {{ music.name }} </div>
+                                </div>
+                                 
+                                <!-- Define the section for displaying track buttons -->
+                                <div class="buttons">
+                                    <div class="playpause-track" onclick="playpauseTrack()">
+                                    <i class="fa fa-play-circle fa-5x"></i>
+                                    </div>
+
+                                </div>
+                                 
+                                <!-- Define the section for displaying the seek slider-->
+                                <div class="slider_container">
+                                    <div class="current-time">00:00</div>
+                                    <input type="range" min="1" max="100"
+                                    value="0" class="seek_slider" onchange="seekTo()">
+                                    <div class="total-duration">00:00</div>
+                                </div>
+                                 
+                                <!-- Define the section for displaying the volume slider-->
+                                 <div class="slider_container">
+                                    <i class="fa fa-volume-down"></i>
+                                    <input type="range" min="1" max="100"
+                                    value="99" class="volume_slider" onchange="setVolume()">
+                                    <i class="fa fa-volume-up"></i>
+                                </div>
                             </div>
-                            <audio controls>
-                                <source src="{% if music.audio %}{{ music.audio.url }}{% endif %}" type="audio/mpeg">
-                            </audio>
                         </div>
                     </div>
                 </div>
-
-                <div class="signers">
+                <div class="singers">
                     <div class="">
-                        <h4>Signers</h4>
+                        <h4 class="main_title">Singers</h4>
                         <div class="detail_music_box row">
-                        {% if music.signer.all  %}
-                            {% for signer in music.signer.all %}
-                            <a href="{{ signer.get_absolute_url }}" data-tooltip="Person {{ forloop.counter }}" data-placement="top" class="detail_mov_act_img col-lg-3 col-md-4 col-sm-12">
-                                <img src="{% if signer.image %}{{ signer.image.url }}{% endif %}" alt="avatar1"/>
+                        {% if music.singer.all  %}
+                            {% for singer in music.singer.all %}
+                            <a href="{{ singer.get_absolute_url }}" data-tooltip="Person {{ forloop.counter }}" data-placement="top" class="detail_mov_act_img col-lg-3 col-md-4 col-sm-12">
+                                <img src="{% if singer.image %}{{ singer.image.url }}{% endif %}" alt="avatar1"/>
                             </a>
                             {% endfor %}
                         {% endif %}
@@ -48,4 +78,157 @@
         </div>
     </div>
 </div>
+<div class="comments_container container">
+    <div class="comment-wrapper-{{music.id}} comments">
+        <div class="icon">
+            <i class="fa-solid fa-message"></i> ... Text
+        </div>
+        {% for comment in music.music_comments.all %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <p><i class="fas fa-quote-right"></i> {{ comment.comment }}</p>
+                <p>
+                    <h4><i class="fas fa-music"></i> {{ comment.user.username }}</h4>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="comments_container">
+        {% if user.is_authenticated %}
+        <div class="card my-3">
+            <h6 class="card-header"><i class="fas fa-headphones-alt"></i> Add Comment</h6>
+            <div class="card-body">
+                <textarea class="form-control comment-text-{{music.id}}"></textarea>
+                <button type="button" data-music="{{music.id}}" class="btn btn-dark my-3 save-comment">Add</button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+<script>
+
+$(document).ready(function(){
+        $(".save-comment").on('click',function(){
+            var _musicid=$(this).data('music');
+            var _comment=$(".comment-text-"+_musicid).val();
+            $.ajax({
+                url:"/save-comment/",
+                type:"post",
+                data:{
+                    comment:_comment,
+                    musicid:_musicid,
+                    csrfmiddlewaretoken:"{{csrf_token}}"
+                },
+                dataType:'json',
+                beforeSend:function(){
+                    $(".save-comment").addClass('disabled').text('Saving...');
+                },
+                success:function(res){
+                    if(res.bool==true){
+                        $(".comment-text-"+_musicid).val('');
+                        var _html='<div class="card mb-2 animate__animated animate__fadeInUp">\
+                        <div class="card-body">\
+                            <p>'+'<i class="fas fa-quote-right"></i>'+" "+_comment+'</p>\
+                            <p>\
+                                <h4><i class="fas fa-music"></i> {{request.user}}</h4>\
+                            </p>\
+                        </div>\
+                    </div>';
+                    $(".comment-wrapper-"+_musicid).append(_html);
+                    }
+                    $(".save-comment").removeClass('disabled').text('Add');
+                }
+            });
+        });
+    });
+
+    let now_playing = document.querySelector(".now-playing");
+    let playpause_btn = document.querySelector(".playpause-track"); 
+    let seek_slider = document.querySelector(".seek_slider");
+    let volume_slider = document.querySelector(".volume_slider");
+    let curr_time = document.querySelector(".current-time");
+    let total_duration = document.querySelector(".total-duration");
+
+    let track_index = 0;
+    let isPlaying = false;
+    let updateTimer;
+
+// Create new audio element
+    let curr_track = document.createElement('audio');
+
+// Define the tracks that have to be played
+    let track_list = [{name: "{{ music.name }}", path: "{{ music.audio }}"}];
+
+    function loadTrack(track_index){
+      clearInterval(updateTimer);
+      resetValues();
+      curr_track.src = track_list[track_index].path;
+      curr_track.load();
+
+      now_playing.textContent = "PLAYING " + (track_index + 1) + " OF " + track_list.length;
+
+      updateTimer = setInterval(seekUpdate, 1000);
+    }
+
+    function resetValues(){
+      curr_time.textContent = "00:00";
+      total_duration.textContent = "00:00";
+      seek_slider.value = 0;
+    }
+
+    // Load the first track in the tracklist
+    loadTrack(track_index);
+
+    function playpauseTrack(){
+      if (!isPlaying) playTrack();
+      else pauseTrack();
+    }
+
+    function playTrack() {
+      curr_track.play();
+      isPlaying = true;
+      playpause_btn.innerHTML = '<i class="fa fa-pause-circle fa-5x"></i>';
+    }
+
+    function pauseTrack(){
+      curr_track.pause();
+      isPlaying = false;
+      playpause_btn.innerHTML = '<i class="fa fa-play-circle fa-5x"></i>';
+    }
+
+    function seekTo(){
+      let seekto = curr_track.duration * (seek_slider.value / 100);
+      curr_track.currentTime = seekto;
+    }
+
+    function setVolume(){
+      curr_track.volume = volume_slider.value / 100;
+    }
+
+    function seekUpdate(){
+      let seekPosition = 0;
+
+      if (!isNaN(curr_track.duration)){
+        seekPosition = curr_track.currentTime * (100 / curr_track.duration);
+
+        seek_slider.value = seekPosition;
+
+        let currentMinutes = Math.floor(curr_track.currentTime / 60);
+        let currentSeconds = Math.floor(curr_track.currentTime - currentMinutes * 60);
+        let durationMinutes = Math.floor(curr_track.duration / 60);
+        let durationSeconds = Math.floor(curr_track.duration - durationMinutes * 60);
+
+        if (currentSeconds < 10) { currentSeconds = "0" + currentSeconds; }
+        if (durationSeconds < 10) { durationSeconds = "0" + durationSeconds; }
+        if (currentMinutes < 10) { currentMinutes = "0" + currentMinutes; }
+        if (durationMinutes < 10) { durationMinutes = "0" + durationMinutes; }
+
+        curr_time.textContent = currentMinutes + ":" + currentSeconds;
+        total_duration.textContent = durationMinutes + ":" + durationSeconds;
+      }
+    }
+  </script>
 {% endblock %}
+

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% load static %}
+{% block content  %}
+
+<!-- Profile page -->
+    <div class="add_post_box user_profile_container">
+        <h1 class="add_post_title title">Hello {{ request.user.username | title}}</h1>
+    <div class="form_design profile">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">First name</th>
+                <th scope="col">Last name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Date of birth</th>
+                <th scope="col">Phone number </th>
+            </tr>
+            </thead>
+            <tbody class="table-group-divider">
+            <tr>
+                <th scope="row">
+                    <div class="user_profile_image"><img src="{{ user.profile.image.url }}" alt="{{ request.user.first_name }}"></div>
+                </th>
+                <td>{{ request.user.first_name }}</td>
+                <td>{{ request.user.last_name }}</td>
+                <td>{{ request.user.email }}</td>
+                <td>{{ user.profile.date_of_birth }}</td>
+                <td>{{ user.profile.phone_number }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- NEED TO REVIEW -->
+        <!-- {% if request.user.is_staff %}
+            <a href="{url 'base:change_content'}">Change site content</a>
+        {% endif %} -->
+    </div>
+    </div>
+{% endblock %}
