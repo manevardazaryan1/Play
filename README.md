@@ -4,8 +4,8 @@
 
 ### Features
 
-- **Listen to Music**
-- **Search for Music** (and songs)
-- **Write comments** (on songs)
-- **Create Playlis**
+- Listen to Music
+- Search for Music (or artists)
+- Write comments (on songs)
+- Create Playlists
 
