@@ -87,9 +87,20 @@ body{
     padding: 20px !important;
 }
 
+#carouselExampleAutoplaying,
+.carousel-item,
+.carousel-item img,
+#carouselExampleCaptions{
+    height: calc(100vh - 173px);
+}
 
 .music_main_box .year_box{
     color: #ed4099;
+}
+
+.carousel-item img{
+    width: 100%;
+    object-fit: cover;
 }
 
 .singer_content{
@@ -276,7 +287,7 @@ body{
 }
 
 .base_main{
-    min-height: 100vh;
+    min-height: calc(100vh - 173px);
 }
 
 .add_post_box{
@@ -483,7 +494,7 @@ footer{
 }
 
 .user_profile_container{
-    min-height: 100vh;
+    min-height: calc(100vh - 173px);
 }
 
 .singer_container .title{
@@ -633,6 +644,7 @@ textarea[name='description']{
 
 .add_post_box p a{
     color: #ed4099;
+    text-decoration: none;
 }
 
 .search_box button,
@@ -651,7 +663,6 @@ textarea[name='description']{
     padding: 5px;
     color: #fff;
     text-align: center;
-    margin-left: 20px;
 }
 
 .search_box label{
@@ -661,6 +672,7 @@ textarea[name='description']{
 .music_container .search_box button,
 .music_container .search_box input{
     border: 1px solid #0217FF;
+    margin-left: 20px !important;
 }
 
 .search_box button:hover{
@@ -893,10 +905,17 @@ textarea[name='description']{
     margin-left: 0 !important;
 }
 
+.log_box{
+    margin-left: 20px;
+}
 
 .log_box p{
     display:  flex;
     flex-direction: row;
+}
+
+.log_box p a {
+    text-decoration: none;
 }
 
 .log_box p a:last-child{
@@ -911,6 +930,14 @@ textarea[name='description']{
 .date_of_birth{
     font-size: 20px;
     margin-bottom: 20px;
+}
+
+.music_image a,
+.singer_image a{
+    height: 100%;
+    width: 100%;
+    display: block;
+    cursor: pointer;
 }
 
 @media only screen and (max-width: 1100px){
@@ -932,6 +959,7 @@ textarea[name='description']{
 @media only screen and (max-width: 992px){
     .search_box{
         flex-direction: column;
+        width: 50%;
     }  
 
     .search_box button{
@@ -949,6 +977,12 @@ textarea[name='description']{
 
     .search_box label{
         margin-top: 10px;
+        margin-left: 0;
+    }
+
+    .search_box button, 
+    .search_box input{
+        margin-left: 0 !important;
     }
 
     .navbar .dropdown-menu[data-bs-popper] {
@@ -964,11 +998,32 @@ textarea[name='description']{
         margin-top: 10px;
         margin-bottom: 10px;
     }
-}
 
+    .music_container .search_box button,
+    .music_container .search_box input{
+        margin-left: 0 !important;
+    }
+}
 
 @media only screen and (max-width: 768px){
     .log_reg_form{
         width: 100%;
     }
+
+    .search_box input{
+        margin-left: 0;
+    }
+
+    .search_box{
+        flex-direction: column;
+        width: 67%;
+    }  
+
+}
+
+@media only screen and (max-width: 450px){
+    .search_box{
+        flex-direction: column;
+        width: 100%;
+    }  
 }

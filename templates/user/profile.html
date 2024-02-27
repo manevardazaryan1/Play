@@ -10,7 +10,6 @@
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">#</th>
                 <th scope="col">First name</th>
                 <th scope="col">Last name</th>
                 <th scope="col">Email</th>
@@ -20,14 +19,11 @@
             </thead>
             <tbody class="table-group-divider">
             <tr>
-                <th scope="row">
-                    <div class="user_profile_image"><img src="{{ user.profile.image.url }}" alt="{{ request.user.first_name }}"></div>
-                </th>
                 <td>{{ request.user.first_name }}</td>
                 <td>{{ request.user.last_name }}</td>
                 <td>{{ request.user.email }}</td>
-                <td>{{ user.profile.date_of_birth }}</td>
-                <td>{{ user.profile.phone_number }}</td>
+                <td>-</td>
+                <td>-</td>
             </tr>
             </tbody>
         </table>
